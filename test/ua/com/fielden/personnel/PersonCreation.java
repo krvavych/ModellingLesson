@@ -1,6 +1,7 @@
 package ua.com.fielden.personnel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,11 +21,15 @@ public class PersonCreation {
 	}
 
 	@Test
-	public void construction_of_not_fully_initialised_person_from_its_string() {
+	public void construction_of_not_fully_initialised_person_should_be_equal_to_fromString_construction() {
 		final Person person1 = new Person()
+		.setName("Ann")
 				.setBirthday(LocalDate.of(2000, Month.MAY, 1))
-				.setSurname("Smith").setSalary(BigDecimal.valueOf(100));
-		final Person person2 = Person.mkFromString(person1.toString());
+				.setSalary(BigDecimal.valueOf(100));
+		final Person person2 = new Person()
+		.setName("Ann")
+		.setBirthday(LocalDate.of(2000, Month.MAY, 1))
+		.setSalary(BigDecimal.valueOf(100));
 		assertEquals(person1, person2);
 	}
 
@@ -33,7 +38,7 @@ public class PersonCreation {
 		try {
 			Person.mkFromString("bla-bla-incorrect");
 			fail();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 
 	}
@@ -49,13 +54,13 @@ public class PersonCreation {
 			assertEquals("Salary -35 is not permited", ex.getMessage());
 		}
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void negative_should_not_be_permiteddifferent_approch(){
 		new Person()
 		.setBirthday(LocalDate.of(2000, Month.MAY, 1))
 		.setSurname("Smith").setSalary(new BigDecimal("-35"));
 	}
-	
-	
+
+
 }

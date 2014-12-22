@@ -11,15 +11,19 @@ import java.util.TreeSet;
 
 import ua.com.fielden.personnel.CommonComparator.SortBy;
 
-
 public class Person implements Comparable<Person> {
 
 	public Person(final String name, final String surname,
-			final LocalDate birthday, final BigDecimal salary) {
+			final LocalDate birthday, final BigDecimal salary,
+			final OrganisationRole role, final Person supervisor,
+			final Person partner) {
 		this.birthday = birthday;
 		this.name = name;
 		this.surname = surname;
 		this.salary = salary;
+		this.organisationRole = role;
+		this.supervisor = supervisor;
+		this.partner = partner;
 	}
 
 	public Person() {
@@ -29,6 +33,9 @@ public class Person implements Comparable<Person> {
 	private LocalDate birthday;
 	private String name;
 	private BigDecimal salary;
+	private OrganisationRole organisationRole;
+	private Person supervisor;
+	private Person partner;
 
 	@Override
 	public int compareTo(final Person obj) {
@@ -97,14 +104,41 @@ public class Person implements Comparable<Person> {
 		return salary;
 	}
 
+	public Person setOrganisationRole(final OrganisationRole role) {
+		this.organisationRole = role;
+		return this;
+	}
+
+	public OrganisationRole getOrganisationRole() {
+		return organisationRole;
+	}
+
+	public Person setSupervisor(final Person supervisor) {
+		this.supervisor = supervisor;
+		return this;
+	}
+
+	public Person getSupervisor() {
+		return supervisor;
+	}
+
+	public Person setPartner(final Person partner) {
+		this.partner = partner;
+		return this;
+	}
+
+	public Person getPartner() {
+		return partner;
+	}
+
 	public Person setSalary(final BigDecimal amont) {
 		if ((amont != null) && (amont.compareTo(BigDecimal.ZERO) < 0)) {
 			throw new IllegalArgumentException(format(
 					"Salary %s is not permited", amont));
 		}
-		if (amont == null){
-		 this.salary = BigDecimal.ZERO;
-		 return this;
+		if (amont == null) {
+			this.salary = BigDecimal.ZERO;
+			return this;
 		}
 		this.salary = amont;
 		return this;
@@ -124,7 +158,10 @@ public class Person implements Comparable<Person> {
 
 		return eq(this.getName(), that.getName())
 				&& eq(this.getSurname(), that.getSurname())
-				&& eq(this.getBirthday(), that.getBirthday());
+				&& eq(this.getBirthday(), that.getBirthday())
+				&& eq(this.getOrganisationRole(), that.getOrganisationRole())
+				&& eq(this.getSupervisor(), that.getSupervisor())
+				&& eq(this.getPartner(), that.getPartner());
 	}
 
 	private boolean eq(final Object thisValue, final Object thatValue) {
@@ -133,28 +170,36 @@ public class Person implements Comparable<Person> {
 			return false;
 		} else if (thisValue != null && thatValue == null) {
 			return false;
+		} else if (thisValue == null && thatValue == null) {
+			return true;
 		} else {
-			return (thisValue == null && thatValue == null)
-					|| thisValue.equals(thatValue);
+			return (thisValue.equals(thatValue));
 		}
 	}
 
 	@Override
 	public int hashCode() {
-		final int firstHash = 15;
+		final int prime = 31;
 		int result = 1;
-		result = firstHash * result
+		result = prime * result
 				+ ((birthday == null) ? 0 : birthday.hashCode());
-		result = firstHash * result + ((name == null) ? 0 : name.hashCode());
-		result = firstHash * result
-				+ ((surname == null) ? 0 : surname.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime
+				* result
+				+ ((organisationRole == null) ? 0 : organisationRole.hashCode());
+		result = prime * result + ((partner == null) ? 0 : partner.hashCode());
+		result = prime * result + ((salary == null) ? 0 : salary.hashCode());
+		result = prime * result
+				+ ((supervisor == null) ? 0 : supervisor.hashCode());
+		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
 		return result;
 	}
 
 	@Override
 	public String toString() {
 		return name + "\t" + surname + "\t" + birthday + "\t"
-				+ salary.toString();
+				+ salary + "\t" + organisationRole + "\t"
+				+ "supervisor: "+supervisor + "\t" + "parameter: "+partner;
 	}
 
 	public static Person mkFromString(final String strPerson) {
@@ -174,29 +219,35 @@ public class Person implements Comparable<Person> {
 	 * private static boolean contains(final Set<Person> persons, final Person
 	 * person) { for (Person elem : persons) { if (elem == (person)) { return
 	 * true; } } return false;
-	 * 
+	 *
 	 * }
 	 */
 
-	public static void main(final String[] args) {
-		final Set<Person> persons = new TreeSet<Person>(new CommonComparator(SortBy.NameDESC));
-		final Person person1 = new Person().setName("Tania")
-				.setSurname("Smith").setSalary(BigDecimal.valueOf(50))
+	public static void main(final String[] args)
+			throws IllegalArgumentException, IllegalAccessException {
+		final Set<Person> persons = new TreeSet<Person>(new CommonComparator(
+				SortBy.NameDESC));
+		final Person person1 = new Person().setSurname("Smith")
+				.setSalary(BigDecimal.valueOf(50))
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12));
 		final Person person2 = new Person().setName("Natalie")
-				.setSurname("Krue").setSalary(BigDecimal.valueOf(5000))
+				.setSurname("Kruel").setSalary(BigDecimal.valueOf(5000))
 				.setBirthday(LocalDate.of(2050, Month.JANUARY, 12));
 		final Person person3 = new Person().setName("Edd").setSurname("Allen")
+				.setBirthday(LocalDate.of(2001, Month.APRIL, 12))
+				.setSalary(BigDecimal.valueOf(500));
+		final Person person4 = new Person().setName("Edd").setSurname("Allen")
 				.setBirthday(LocalDate.of(2001, Month.APRIL, 12))
 				.setSalary(BigDecimal.valueOf(500));
 		persons.add(person1);
 		persons.add(person2);
 		persons.add(person3);
+		persons.add(person4);
 		for (final Person person : persons) {
 			System.out.println(person);
 
 		}
-
+		// EqualCheck.deepEquals(person1, person2);
 	}
 
 }

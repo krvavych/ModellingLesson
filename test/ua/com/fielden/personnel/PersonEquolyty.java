@@ -1,6 +1,8 @@
 package ua.com.fielden.personnel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -50,17 +52,12 @@ public class PersonEquolyty {
 	@Test
 	public void same_objects_must_have_same_hashCode() {
 		final Person person1 = new Person()
-				.setBirthday(LocalDate.of(2000, Month.MAY, 1)).setName("Jhon")
+				.setBirthday(LocalDate.of(2000, Month.MAY, 1))
 				.setSurname("Smith").setSalary(BigDecimal.valueOf(100));
 		final Person person2 = new Person()
-				.setBirthday(LocalDate.of(2000, Month.MAY, 1)).setName("Jhon")
+				.setBirthday(LocalDate.of(2000, Month.MAY, 1))
 				.setSurname("Smith").setSalary(BigDecimal.valueOf(100));
-
-		if (person1.equals(person2)) {
-			assertTrue(person1.hashCode() == person2.hashCode());
-		} else {
-			assertFalse(person1.hashCode() == person2.hashCode());
-		}
+		assertTrue(person1.hashCode() == person2.hashCode());
 	}
 
 	@Test
@@ -68,8 +65,7 @@ public class PersonEquolyty {
 		final Person person1 = new Person()
 				.setBirthday(LocalDate.of(2000, Month.MAY, 1)).setName("Jhon")
 				.setSurname("Smith");
-		final Person person2 = new Person()
-				.setBirthday(null).setName(null)
+		final Person person2 = new Person().setBirthday(null).setName(null)
 				.setSurname(null);
 		person1.getSurname();
 		if (((person1.getSurname() == null) && (person2.getSurname() == null))
@@ -89,11 +85,13 @@ public class PersonEquolyty {
 		}
 
 	}
-	
+
 	@Test
 	public void equality_between_not_fully_initialised_persons_should_work() {
-		final Person person1 = new Person().setBirthday(LocalDate.of(2000, Month.MAY, 1)).setSurname("Smith");
-		final Person person2 = new Person().setBirthday(LocalDate.of(2000, Month.MAY, 1)).setSurname("Smith");		
+		final Person person1 = new Person().setBirthday(
+				LocalDate.of(2000, Month.MAY, 1)).setSurname("Smith");
+		final Person person2 = new Person().setBirthday(
+				LocalDate.of(2000, Month.MAY, 1)).setSurname("Smith");
 		assertEquals(person1, person2);
 	}
 

@@ -158,10 +158,7 @@ public class Person implements Comparable<Person> {
 
 		return eq(this.getName(), that.getName())
 				&& eq(this.getSurname(), that.getSurname())
-				&& eq(this.getBirthday(), that.getBirthday())
-				&& eq(this.getOrganisationRole(), that.getOrganisationRole())
-				&& eq(this.getSupervisor(), that.getSupervisor())
-				&& eq(this.getPartner(), that.getPartner());
+				&& eq(this.getBirthday(), that.getBirthday());
 	}
 
 	private boolean eq(final Object thisValue, final Object thatValue) {
@@ -184,13 +181,6 @@ public class Person implements Comparable<Person> {
 		result = prime * result
 				+ ((birthday == null) ? 0 : birthday.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime
-				* result
-				+ ((organisationRole == null) ? 0 : organisationRole.hashCode());
-		result = prime * result + ((partner == null) ? 0 : partner.hashCode());
-		result = prime * result + ((salary == null) ? 0 : salary.hashCode());
-		result = prime * result
-				+ ((supervisor == null) ? 0 : supervisor.hashCode());
 		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
 		return result;
 	}
@@ -199,7 +189,7 @@ public class Person implements Comparable<Person> {
 	public String toString() {
 		return name + "\t" + surname + "\t" + birthday + "\t"
 				+ salary + "\t" + organisationRole + "\t"
-				+ "supervisor: "+supervisor + "\t" + "parameter: "+partner;
+				+ "supervisor: "+supervisor + "\t" + "partner: "+partner;
 	}
 
 	public static Person mkFromString(final String strPerson) {

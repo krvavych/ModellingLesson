@@ -1,5 +1,7 @@
 package ua.com.fielden.personnel;
 
+import static java.lang.String.format;
+
 public class OrganisationRole {
 	private String title;
 	private String description;
@@ -29,7 +31,7 @@ public class OrganisationRole {
 	}
 	@Override
 	public String toString() {
-		return "title:" + title + "\t" + "description:"+description;
+		return format("title: %s\tdescription: %s", title, description);
 	}
 	@Override
 	public int hashCode() {

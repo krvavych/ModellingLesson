@@ -1,7 +1,7 @@
 package ua.com.fielden.personnel;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,50 +30,39 @@ public class EqualCheckTest {
 				.setBirthday(LocalDate.of(2050, Month.JANUARY, 12))
 				.setOrganisationRole(new OrganisationRole("someone", null))
 				.setSupervisor(testPerson).setPartner(testPerson);
-		assertTrue(Parameter.notEqual.equals(EqualCheck.deepEquals(person1,
-				person2).getCheckParameter()));
+		assertEquals(Parameter.notEqual,(EqualCheck.deepEquals(person1,
+				person2).getParameter()));
 
 	}
 
-	@Test
-	public void the_same_person_with_different_supervisors_or_partners_should_return_notEqual_result()
-			throws IllegalArgumentException, IllegalAccessException {
-		final Person supervisor1 = new Person().setName(null).setSurname(null)
-				.setSalary(BigDecimal.valueOf(10))
-				.setPartner(new Person().setName("Ann"));
-		final Person supervisor2 = new Person().setName(null).setSurname(null)
-				.setSalary(BigDecimal.valueOf(10)).setPartner(new Person());
-		final Person partner1 = new Person().setName("Jul").setSurname("Bush")
-				.setBirthday(LocalDate.of(2014, Month.APRIL, 12))
-				.setSalary(BigDecimal.valueOf(100)).setOrganisationRole(null)
-				.setSupervisor(supervisor1);
-		final Person partner2 = new Person().setName("Jul").setSurname("Bush")
-				.setBirthday(LocalDate.of(2014, Month.APRIL, 12))
-				.setSalary(BigDecimal.valueOf(100)).setOrganisationRole(null)
-				.setSupervisor(supervisor2);
-		final Person testPerson1 = new Person().setName("July")
-				.setSurname("Bush")
-				.setBirthday(LocalDate.of(2014, Month.APRIL, 12))
-				.setSalary(BigDecimal.valueOf(100)).setOrganisationRole(null)
-				.setPartner(partner2);
-		final Person testPerson2 = new Person().setName("July")
-				.setSurname("Bush")
-				.setBirthday(LocalDate.of(2014, Month.APRIL, 12))
-				.setSalary(BigDecimal.valueOf(100)).setOrganisationRole(null)
-				.setPartner(partner1);
-		final Person person1 = new Person().setName(null).setName("Ann")
-				.setSurname("Smith").setSalary(BigDecimal.valueOf(50))
-				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
-				.setOrganisationRole(new OrganisationRole("menager", null))
-				.setSupervisor(testPerson1).setPartner(testPerson1);
-		final Person person2 = new Person().setName(null).setName("Ann")
-				.setSurname("Smith").setSalary(BigDecimal.valueOf(50))
-				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
-				.setOrganisationRole(new OrganisationRole("menager", null))
-				.setSupervisor(testPerson1).setPartner(testPerson2);
-		assertTrue(Parameter.notEqual.equals(EqualCheck.deepEquals(person1,
-				person2).getCheckParameter()));
 
+	@Test
+	public void make_sure_comparison_goes_deeper_than_first_level_of_field_declarations() throws IllegalArgumentException, IllegalAccessException {
+		final Person superA = new Person().setName("A").setSurname("A");
+		final Person superB = new Person().setName("B").setSurname("B");
+		final Person superAWithPartner = new Person().setName("A").setSurname("A").setPartner(superB);
+
+		final Person personWithSuperA = new Person().setName("P1").setSurname("P1").setSupervisor(superA);
+		final Person personWithSuperAWithPartner = new Person().setName("P1").setSurname("P1").setSupervisor(superAWithPartner);
+		assertEquals(Parameter.nullParameter, EqualCheck.deepEquals(personWithSuperA, personWithSuperAWithPartner).getParameter());
+	}
+	@Test
+	public void supervisor_of_person_can_be_partner_of_this_person() throws IllegalArgumentException, IllegalAccessException{
+		final Person supervisor = new Person().setName("supervisor").setSurname("supervisor");
+		final Person personA = new Person().setName("A").setSurname("A").setSupervisor(supervisor);
+		final Person personB = new Person().setName("A").setSurname("A").setSupervisor(supervisor);
+		supervisor.setPartner(personA);
+		assertEquals(Parameter.equal, EqualCheck.deepEquals(personA, personB).getParameter());
+	}
+
+	@Test
+	public void it_should_be_impossible_to_compare_different_objects(){
+		try{
+			EqualCheck.deepEquals( new Object() ,new  Person());
+			fail();
+		}catch (final Exception e){
+
+		}
 	}
 
 	@Test
@@ -88,7 +77,7 @@ public class EqualCheckTest {
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
 				.setSupervisor(null).setOrganisationRole(null).setPartner(null);
 		assertEquals(Parameter.equal,
-				(EqualCheck.deepEquals(person1, person2)).getCheckParameter());
+				(EqualCheck.deepEquals(person1, person2)).getParameter());
 
 	}
 

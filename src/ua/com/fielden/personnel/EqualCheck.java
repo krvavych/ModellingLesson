@@ -1,18 +1,15 @@
 package ua.com.fielden.personnel;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import ua.com.fielden.personnel.Result.Parameter;
 
-public class EqualCheck<T> {
-	public EqualCheck(final Object obj1, final Object obj2) throws IllegalArgumentException, IllegalAccessException {
-		deepEquals(obj1, obj2);
-	}
-	public static Result deepEquals(final Object o1, final Object o2) throws IllegalArgumentException, IllegalAccessException{
-		final Set<Set<Object>> compared = new HashSet<Set<Object>>();
+public class EqualCheck {
+
+	public static <T> Result deepEquals(final T o1, final T o2) throws IllegalArgumentException, IllegalAccessException{
+		final Set<Set<Object>> compared = new HashSet<>();
 		return deepEqualsNext(o1, o2, compared);
 	}
 
@@ -30,10 +27,10 @@ public class EqualCheck<T> {
 		setWithCompareObject.add(object2);
 		compared.add(setWithCompareObject);
 
+		final Set<String> road = new HashSet<>();
+
 		final Field[] fieldsOfObject1 = classObject1.getDeclaredFields();
 		final Field[] fieldsOfObject2 = classObject2.getDeclaredFields();
-		final ArrayList<Object> roadList = new ArrayList<>();
-		roadList.add(fieldsOfObject1[0].getName());
 
 		for (int fieldNum = 0; fieldNum < fieldsOfObject1.length; fieldNum++) {
 			fieldsOfObject1[fieldNum].setAccessible(true);
@@ -42,16 +39,24 @@ public class EqualCheck<T> {
 			final Object newObject2 = fieldsOfObject2[fieldNum].get(object2);
 			if ((newObject1 == null && newObject2 != null)
 					|| (newObject1 != null && newObject2 == null)) {
+
+				road.add(fieldsOfObject1[fieldNum].getName());
+				System.out.println("NullParameter: "+"this");
+				for (final String field : road) {
+					System.out.println("."+field);
+				}
+
 				return new Result(Parameter.nullParameter, newObject1,
 						newObject2);
 			}
 			if (newObject1 != null && newObject2 != null
-					&& (newObject1.getClass() == (classObject1))
-					&& (newObject2.getClass() == (classObject2))) {
-				final Set<Object> setWithCompareObjects = new HashSet<Object>();
+					&& (newObject1.getClass() == classObject1)
+					&& (newObject2.getClass() == classObject2)) {
+				final Set<Object> setWithCompareObjects = new HashSet<>();
 				setWithCompareObjects.add(newObject1);
 				setWithCompareObjects.add(newObject2);
-				if (!(compared.contains(setWithCompareObjects))) {
+				if (!compared.contains(setWithCompareObjects)) {
+					road.add(fieldsOfObject1[fieldNum].getName());
 
 					compared.add(setWithCompareObjects);
 					return deepEqualsNext(newObject1, newObject2, compared);
@@ -59,6 +64,11 @@ public class EqualCheck<T> {
 			}
 			if (newObject1 != null && newObject2 != null
 					&& newObject1.hashCode() != newObject2.hashCode()) {
+				road.add(fieldsOfObject1[fieldNum].getName());
+				System.out.println("NotEqual: "+"this");
+				for (final String field : road) {
+					System.out.println("."+field);
+				}
 				return new Result(Parameter.notEqual, newObject1, newObject2);
 			}
 		}

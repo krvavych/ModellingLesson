@@ -69,7 +69,7 @@ public class EqualCheckTest {
 	@Test
 	public void it_should_be_impossible_to_compare_different_objects() {
 		try {
-			EqualCheck.deepEquals(new Object(), new Person());
+			EqualCheck.deepEquals(new Result(), new Person());
 			fail();
 		} catch (final Exception e) {
 		}
@@ -95,8 +95,8 @@ public class EqualCheckTest {
 			throws IllegalArgumentException, IllegalAccessException {
 		final Person person1 = new Person().setName("A");
 		final Person person2 = new Person().setName("a");
-		final Person supervisor1 = new Person().setPartner(person1);
-		final Person supervisor2 = new Person().setPartner(person2);
+		final Person supervisor1 = new Person().setPartner(person1).setName("");
+		final Person supervisor2 = new Person().setPartner(person2).setName("name");
 		person1.setSupervisor(supervisor1).setPartner(supervisor1);
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
 		assertEquals(Parameter.notEqual, EqualCheck

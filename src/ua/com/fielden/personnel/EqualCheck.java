@@ -22,7 +22,7 @@ public class EqualCheck<T> {
 		final Class<?> classObject2 = object2.getClass();
 		if (classObject1 != classObject2) {
 			throw new IllegalArgumentException(
-					"You can`t compate different class objects");
+					"You can`t compare different class objects");
 		}
 		final Set<Object> setWithCompareObject = new HashSet<Object>();
 

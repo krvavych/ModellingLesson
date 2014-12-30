@@ -6,8 +6,6 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Test;
 
@@ -74,7 +72,6 @@ public class EqualCheckTest {
 			EqualCheck.deepEquals(new Object(), new Person());
 			fail();
 		} catch (final Exception e) {
-
 		}
 	}
 
@@ -91,7 +88,6 @@ public class EqualCheckTest {
 				.setSupervisor(null).setOrganisationRole(null).setPartner(null);
 		assertEquals(Parameter.equal,
 				(EqualCheck.deepEquals(person1, person2)).getParameter());
-
 	}
 
 	@Test
@@ -105,7 +101,5 @@ public class EqualCheckTest {
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
 		assertEquals(Parameter.notEqual, EqualCheck
 				.deepEquals(person1, person2).getParameter());
-
 	}
-
 }

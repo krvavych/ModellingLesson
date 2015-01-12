@@ -13,11 +13,11 @@ public class EqualCheck {
 		return deepEqualsNext(o1, o2, compared);
 	}
 
-	final private static Set<String> road = new HashSet<>();
 	private static <T> Result deepEqualsNext(final T object1, final T object2, final Set<Set<Object>> compared)
 			throws IllegalArgumentException, IllegalAccessException {
 		final Class<?> classObject1 = object1.getClass();
 		final Class<?> classObject2 = object2.getClass();
+		final  Set<String> road = new HashSet<>();
 		if (classObject1 != classObject2) {
 			throw new IllegalArgumentException(
 					"You can`t compare different class objects");

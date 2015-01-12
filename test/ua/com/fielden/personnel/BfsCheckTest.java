@@ -11,8 +11,7 @@ import org.junit.Test;
 
 import ua.com.fielden.personnel.Result.Parameter;
 
-public class EqualCheckTest {
-
+public class BfsCheckTest {
 	@Test
 	public void different_person_should_return_notEqual_result()
 			throws IllegalArgumentException, IllegalAccessException {
@@ -31,7 +30,7 @@ public class EqualCheckTest {
 				.setOrganisationRole(new OrganisationRole("someone", null))
 				.setSupervisor(testPerson).setPartner(testPerson);
 		assertEquals(Parameter.notEqual,
-				(EqualCheck.deepEquals(person1, person2).getParameter()));
+				(BfsCheck.bfsEquals(person1, person2).getParameter()));
 
 	}
 
@@ -46,9 +45,11 @@ public class EqualCheckTest {
 				.setSurname("P1").setSupervisor(superA);
 		final Person personWithSuperAWithPartner = new Person().setName("P1")
 				.setSurname("P1").setSupervisor(superAWithPartner);
+		System.out.println(personWithSuperA.toString());
+		System.out.println(personWithSuperAWithPartner.toString());
 		assertEquals(
 				Parameter.nullParameter,
-				EqualCheck.deepEquals(personWithSuperA,
+				BfsCheck.bfsEquals(personWithSuperA,
 						personWithSuperAWithPartner).getParameter());
 	}
 
@@ -62,14 +63,14 @@ public class EqualCheckTest {
 		final Person personB = new Person().setName("A").setSurname("A")
 				.setSupervisor(supervisor);
 		supervisor.setPartner(personA);
-		assertEquals(Parameter.equal, EqualCheck.deepEquals(personA, personB)
+		assertEquals(Parameter.equal, BfsCheck.bfsEquals(personA, personB)
 				.getParameter());
 	}
 
 	@Test
 	public void it_should_be_impossible_to_compare_different_objects() {
 		try {
-			EqualCheck.deepEquals(new Result(), new Person());
+			BfsCheck.bfsEquals(new Result(), new Person());
 			fail();
 		} catch (final Exception e) {
 		}
@@ -87,7 +88,7 @@ public class EqualCheckTest {
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
 				.setSupervisor(null).setOrganisationRole(null).setPartner(null);
 		assertEquals(Parameter.equal,
-				(EqualCheck.deepEquals(person1, person2)).getParameter());
+				(BfsCheck.bfsEquals(person1, person2)).getParameter());
 	}
 
 	@Test
@@ -99,7 +100,19 @@ public class EqualCheckTest {
 		final Person supervisor2 = new Person().setPartner(person2).setName("name");
 		person1.setSupervisor(supervisor1).setPartner(supervisor1);
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
-		assertEquals(Parameter.notEqual, EqualCheck
-				.deepEquals(person1, person2).getParameter());
+		assertEquals(Parameter.notEqual, BfsCheck
+				.bfsEquals(person1, person2).getParameter());
 	}
+
+	@Test
+	public void dfs_should_check_in_breadth() throws IllegalArgumentException, IllegalAccessException{
+		final ForTest smth1 = new ForTest().setTitle("title").setInteger(1);
+		final ForTest smth2 = new ForTest().setTitle("title").setInteger(2);
+		final ForTest obj1 = new ForTest().setInteger(2).setSmthing(smth1).setTitle("title");
+		final ForTest obj2 = new ForTest().setSmthing(smth2).setTitle("title");
+		assertEquals(Parameter.nullParameter, BfsCheck.bfsEquals(obj1, obj2).getParameter());
+		assertEquals(Parameter.notEqual, EqualCheck.deepEquals(obj1, obj2).getParameter());
+	}
+
+
 }

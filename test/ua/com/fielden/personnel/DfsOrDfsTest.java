@@ -14,16 +14,6 @@ import ua.com.fielden.personnel.Result.Parameter;
 
 public class DfsOrDfsTest {
 	@Test
-	public void dfs_should_check_in_breadth() throws IllegalArgumentException, IllegalAccessException{
-		final ForTest smth1 = new ForTest().setTitle("title").setInteger(1);
-		final ForTest smth2 = new ForTest().setTitle("title").setInteger(2);
-		final ForTest obj1 = new ForTest().setInteger(2).setSmthing(smth1).setTitle("title");
-		final ForTest obj2 = new ForTest().setSmthing(smth2).setTitle("title");
-		assertEquals(Parameter.nullParameter, Check.checkEquals(obj1, obj2, CheckBy.Bfs).getParameter());
-		assertEquals(Parameter.notEqual, Check.checkEquals(obj1, obj2, CheckBy.Dfs).getParameter());
-	}
-
-	@Test
 	public void different_person_should_return_notEqual_result()
 			throws IllegalArgumentException, IllegalAccessException {
 		final Person testPerson = new Person().setName("July")
@@ -59,8 +49,8 @@ public class DfsOrDfsTest {
 				.setSurname("P1").setSupervisor(superA);
 		final Person personWithSuperAWithPartner = new Person().setName("P1")
 				.setSurname("P1").setSupervisor(superAWithPartner);
-		System.out.println(personWithSuperA.toString());
-		System.out.println(personWithSuperAWithPartner.toString());
+		//System.out.println(personWithSuperA.toString());
+		//System.out.println(personWithSuperAWithPartner.toString());
 		assertEquals(
 				Parameter.nullParameter,
 				Check.checkEquals(personWithSuperA,
@@ -128,7 +118,6 @@ public class DfsOrDfsTest {
 				.checkEquals(person1, person2, CheckBy.Bfs).getParameter());
 		assertEquals(Parameter.notEqual, Check
 				.checkEquals(person1, person2, CheckBy.Dfs).getParameter());
-
 	}
 
 }

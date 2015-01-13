@@ -6,6 +6,8 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -30,9 +32,18 @@ public class EqualCheckTest {
 				.setBirthday(LocalDate.of(2050, Month.JANUARY, 12))
 				.setOrganisationRole(new OrganisationRole("someone", null))
 				.setSupervisor(testPerson).setPartner(testPerson);
+		final Set<Integer> set = new HashSet<>();
+//		set.add(0);
+//		set.add(1);
+//		set.add(2);
+//		set.add(3);
+//		set.add(4);
+//		set.add(5);
+//		set.add(6);
+		assertEquals(Parameter.equal,
+				(EqualCheck.choose(person1, person2, set).getParameter()));
 		assertEquals(Parameter.notEqual,
 				(EqualCheck.deepEquals(person1, person2).getParameter()));
-
 	}
 
 	@Test
@@ -46,10 +57,23 @@ public class EqualCheckTest {
 				.setSurname("P1").setSupervisor(superA);
 		final Person personWithSuperAWithPartner = new Person().setName("P1")
 				.setSurname("P1").setSupervisor(superAWithPartner);
+		final Set<Integer> set = new HashSet<>();
+		set.add(0);
+		set.add(1);
+		set.add(2);
+		set.add(3);
+		set.add(4);
+		set.add(5);
+		//set.add(6);
+		assertEquals(
+				Parameter.equal,
+				EqualCheck.choose(personWithSuperA,
+						personWithSuperAWithPartner,set).getParameter());
 		assertEquals(
 				Parameter.nullParameter,
 				EqualCheck.deepEquals(personWithSuperA,
 						personWithSuperAWithPartner).getParameter());
+
 	}
 
 	@Test
@@ -62,14 +86,25 @@ public class EqualCheckTest {
 		final Person personB = new Person().setName("A").setSurname("A")
 				.setSupervisor(supervisor);
 		supervisor.setPartner(personA);
+		final Set<Integer> set = new HashSet<>();
+		set.add(0);
+		set.add(1);
+		set.add(2);
+		set.add(3);
+		set.add(4);
+		set.add(5);
+		set.add(6);
+		assertEquals(Parameter.equal, EqualCheck.choose(personA, personB,set)
+				.getParameter());
 		assertEquals(Parameter.equal, EqualCheck.deepEquals(personA, personB)
 				.getParameter());
+
 	}
 
 	@Test
 	public void it_should_be_impossible_to_compare_different_objects() {
 		try {
-			EqualCheck.deepEquals(new Result(), new Person());
+			EqualCheck.choose(new Result(), new Person(), new HashSet<Integer>());
 			fail();
 		} catch (final Exception e) {
 		}
@@ -86,8 +121,19 @@ public class EqualCheckTest {
 				.setSalary(BigDecimal.valueOf(50))
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
 				.setSupervisor(null).setOrganisationRole(null).setPartner(null);
+		final Set<Integer> set = new HashSet<>();
+		set.add(0);
+		set.add(1);
+		set.add(2);
+		set.add(3);
+		set.add(4);
+		set.add(5);
+		set.add(6);
+		assertEquals(Parameter.equal,
+				(EqualCheck.choose(person1, person2,set)).getParameter());
 		assertEquals(Parameter.equal,
 				(EqualCheck.deepEquals(person1, person2)).getParameter());
+
 	}
 
 	@Test
@@ -99,6 +145,16 @@ public class EqualCheckTest {
 		final Person supervisor2 = new Person().setPartner(person2).setName("name");
 		person1.setSupervisor(supervisor1).setPartner(supervisor1);
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
+		final Set<Integer> set = new HashSet<>();
+		set.add(0);
+		set.add(1);
+//		set.add(2);
+		set.add(3);
+		set.add(4);
+		set.add(5);
+		set.add(6);
+		assertEquals(Parameter.equal, EqualCheck
+				.choose(person1, person2,set).getParameter());
 		assertEquals(Parameter.notEqual, EqualCheck
 				.deepEquals(person1, person2).getParameter());
 	}

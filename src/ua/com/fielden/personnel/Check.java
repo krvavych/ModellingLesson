@@ -15,16 +15,17 @@ public class Check {
 			final CheckBy parameter) throws IllegalArgumentException,
 			IllegalAccessException {
 		final Set<Set<Object>> compared = new HashSet<>();
+		final Set<String> road = new HashSet<>();
 		System.out.println("This");
-		return checkEqualsNext(o1, o2, compared, parameter);
+		return checkEqualsNext(o1, o2, compared, parameter, road);
 	}
 
 	private static <T> Result checkEqualsNext(final T object1, final T object2,
-			final Set<Set<Object>> compared, final CheckBy parameter)
+			final Set<Set<Object>> compared, final CheckBy parameter, final Set<String> road)
 			throws IllegalArgumentException, IllegalAccessException {
 		final Class<?> classObject1 = object1.getClass();
 		final Class<?> classObject2 = object2.getClass();
-		final Set<String> road = new HashSet<>();
+
 		if (classObject1 != classObject2) {
 			throw new IllegalArgumentException(
 					"You can`t compare different class objects");
@@ -80,9 +81,9 @@ public class Check {
 					setWithCompareObjects.add(newObjectToCompare2);
 					road.add(fieldsOfObject1[fieldNum].getName());
 					if (!compared.contains(setWithCompareObjects)) {
-						//compared.add(setWithCompareObjects);
+						compared.add(setWithCompareObjects);
 						return checkEqualsNext(newObjectToCompare1,
-								newObjectToCompare2, compared, parameter);
+								newObjectToCompare2, compared, parameter, road);
 					}
 				}
 			} else if(parameter == CheckBy.Dfs){
@@ -94,8 +95,8 @@ public class Check {
 					setWithCompareObjects.add(newObject2);
 					road.add(fieldsOfObject1[fieldNum].getName());
 					if (!compared.contains(setWithCompareObjects)) {
-						//compared.add(setWithCompareObjects);
-						return checkEqualsNext(newObject1, newObject2, compared,parameter);
+						compared.add(setWithCompareObjects);
+						return checkEqualsNext(newObject1, newObject2, compared,parameter, road);
 					}
 				}
 			}
@@ -103,4 +104,5 @@ public class Check {
 		System.out.println(" and that are equal");
 		return new Result(Parameter.equal, object1, object2);
 	}
+
 }

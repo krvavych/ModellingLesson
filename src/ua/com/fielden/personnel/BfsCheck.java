@@ -6,18 +6,18 @@ import java.util.Set;
 
 import ua.com.fielden.personnel.Result.Parameter;
 
-public class BfsCheck {
+public class BfsCheck{
 	public static <T> Result bfsEquals(final T o1, final T o2) throws IllegalArgumentException, IllegalAccessException{
 		final Set<Set<Object>> compared = new HashSet<>();
 		System.out.println("This");
-		return bfsEqualsNext(o1, o2, compared);
+		final Set<String> road = new HashSet<>();
+		return bfsEqualsNext(o1, o2, compared, road);
 	}
 
-	private static <T> Result bfsEqualsNext(final T object1, final T object2, final Set<Set<Object>> compared)
+	private static <T> Result bfsEqualsNext(final T object1, final T object2, final Set<Set<Object>> compared, final Set<String>road)
 			throws IllegalArgumentException, IllegalAccessException {
 		final Class<?> classObject1 = object1.getClass();
 		final Class<?> classObject2 = object2.getClass();
-		final Set<String> road = new HashSet<>();
 		if (classObject1 != classObject2) {
 			throw new IllegalArgumentException(
 					"You can`t compare different class objects");
@@ -71,10 +71,10 @@ public class BfsCheck {
 				setWithCompareObjects.add(newObjectToCompare1);
 				setWithCompareObjects.add(newObjectToCompare2);
 			if (!compared.contains(setWithCompareObjects)) {
-				//road.add(fieldsOfObject1[fieldNum].getName());
+				road.add(fieldsOfObject1[fieldNum].getName());
 
 				compared.add(setWithCompareObjects);
-				return bfsEqualsNext(newObjectToCompare1, newObjectToCompare2, compared);
+				return bfsEqualsNext(newObjectToCompare1, newObjectToCompare2, compared, road);
 			}
 			}
 		}

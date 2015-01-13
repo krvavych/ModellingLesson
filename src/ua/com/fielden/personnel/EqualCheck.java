@@ -6,18 +6,18 @@ import java.util.Set;
 
 import ua.com.fielden.personnel.Result.Parameter;
 
-public class EqualCheck {
+public class EqualCheck implements ICheck<Object>{
 
 	public static <T> Result deepEquals(final T o1, final T o2) throws IllegalArgumentException, IllegalAccessException{
 		final Set<Set<Object>> compared = new HashSet<>();
-		return deepEqualsNext(o1, o2, compared);
+		final  Set<String> road = new HashSet<>();
+		return deepEqualsNext(o1, o2, compared, road);
 	}
 
-	private static <T> Result deepEqualsNext(final T object1, final T object2, final Set<Set<Object>> compared)
+	private static <T> Result deepEqualsNext(final T object1, final T object2, final Set<Set<Object>> compared, final Set<String> road)
 			throws IllegalArgumentException, IllegalAccessException {
 		final Class<?> classObject1 = object1.getClass();
 		final Class<?> classObject2 = object2.getClass();
-		final  Set<String> road = new HashSet<>();
 		if (classObject1 != classObject2) {
 			throw new IllegalArgumentException(
 					"You can`t compare different class objects");
@@ -59,7 +59,7 @@ public class EqualCheck {
 					road.add(fieldsOfObject1[fieldNum].getName());
 
 					compared.add(setWithCompareObjects);
-					return deepEqualsNext(newObject1, newObject2, compared);
+					return deepEqualsNext(newObject1, newObject2, compared, road);
 				}
 			}
 			if (newObject1 != null && newObject2 != null
@@ -75,4 +75,7 @@ public class EqualCheck {
 		return new Result(Parameter.equal, object1, object2);
 	}
 
+	public static <T> Result choose(final T obj1, final T obj2, final Set<Integer> set) throws IllegalArgumentException, IllegalAccessException {
+		return ICheck.choose(obj1, obj2, set);
+	}
 }

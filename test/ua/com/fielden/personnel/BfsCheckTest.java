@@ -45,8 +45,8 @@ public class BfsCheckTest {
 				.setSurname("P1").setSupervisor(superA);
 		final Person personWithSuperAWithPartner = new Person().setName("P1")
 				.setSurname("P1").setSupervisor(superAWithPartner);
-		System.out.println(personWithSuperA.toString());
-		System.out.println(personWithSuperAWithPartner.toString());
+		//System.out.println(personWithSuperA.toString());
+		//System.out.println(personWithSuperAWithPartner.toString());
 		assertEquals(
 				Parameter.nullParameter,
 				BfsCheck.bfsEquals(personWithSuperA,
@@ -103,16 +103,4 @@ public class BfsCheckTest {
 		assertEquals(Parameter.notEqual, BfsCheck
 				.bfsEquals(person1, person2).getParameter());
 	}
-
-	@Test
-	public void dfs_should_check_in_breadth() throws IllegalArgumentException, IllegalAccessException{
-		final ForTest smth1 = new ForTest().setTitle("title").setInteger(1);
-		final ForTest smth2 = new ForTest().setTitle("title").setInteger(2);
-		final ForTest obj1 = new ForTest().setInteger(2).setSmthing(smth1).setTitle("title");
-		final ForTest obj2 = new ForTest().setSmthing(smth2).setTitle("title");
-		assertEquals(Parameter.nullParameter, BfsCheck.bfsEquals(obj1, obj2).getParameter());
-		assertEquals(Parameter.notEqual, EqualCheck.deepEquals(obj1, obj2).getParameter());
-	}
-
-
 }

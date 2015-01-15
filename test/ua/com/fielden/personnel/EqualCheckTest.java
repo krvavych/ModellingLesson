@@ -32,9 +32,7 @@ public class EqualCheckTest {
 				.setSupervisor(testPerson).setPartner(testPerson);
 		final EqualCheck check = new EqualCheck();
 		assertEquals(Parameter.notEqual,
-				(EqualCheck.deepEquals(person1, person2).getParameter()));
-		assertEquals(Parameter.notEqual,
-				(EqualCheck.deepEquals(person1, person2, check).getParameter()));
+				(check.deepEquals(person1, person2, check).getParameter()));
 
 	}
 
@@ -50,16 +48,12 @@ public class EqualCheckTest {
 		final Person personWithSuperAWithPartner = new Person().setName("P1")
 				.setSurname("P1").setSupervisor(superAWithPartner);
 		final EqualCheck check = new EqualCheck();
-		assertEquals(
-				Parameter.nullParameter,
-				EqualCheck.deepEquals(personWithSuperA,
-						personWithSuperAWithPartner).getParameter());
+		System.out.println(personWithSuperA.toString());
+		System.out.println(personWithSuperAWithPartner.toString());
 		assertEquals(
 				Parameter.equal,
-				EqualCheck.deepEquals(personWithSuperA,
+				check.deepEquals(personWithSuperA,
 						personWithSuperAWithPartner, check).getParameter());
-
-
 	}
 
 	@Test
@@ -73,9 +67,7 @@ public class EqualCheckTest {
 				.setSupervisor(supervisor);
 		supervisor.setPartner(personA);
 		final EqualCheck check = new EqualCheck();
-		assertEquals(Parameter.equal, EqualCheck.deepEquals(personA, personB)
-				.getParameter());
-		assertEquals(Parameter.equal, EqualCheck.deepEquals(personA, personB, check)
+		assertEquals(Parameter.equal, check.deepEquals(personA, personB, check)
 				.getParameter());
 
 
@@ -85,7 +77,7 @@ public class EqualCheckTest {
 	public void it_should_be_impossible_to_compare_different_objects() {
 		final EqualCheck check = new EqualCheck();
 		try {
-			EqualCheck.deepEquals(new Result(), new Person(), check);
+			check.deepEquals(new Result(), new Person(), check);
 			fail();
 		} catch (final Exception e) {
 		}
@@ -103,9 +95,7 @@ public class EqualCheckTest {
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
 				.setSupervisor(null).setOrganisationRole(null).setPartner(null);
 		final EqualCheck check = new EqualCheck();
-		assertEquals(Parameter.equal,
-				(EqualCheck.deepEquals(person1, person2)).getParameter());
-		assertEquals(Parameter.equal, EqualCheck
+		assertEquals(Parameter.equal, check
 				.deepEquals(person1, person2, check).getParameter());
 
 
@@ -121,19 +111,7 @@ public class EqualCheckTest {
 		person1.setSupervisor(supervisor1).setPartner(supervisor1);
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
 		final EqualCheck check = new EqualCheck();
-		assertEquals(Parameter.notEqual, EqualCheck
-				.deepEquals(person1, person2).getParameter());
-		assertEquals(Parameter.equal, EqualCheck
+		assertEquals(Parameter.equal, check
 				.deepEquals(person1, person2, check).getParameter());
-		assertEquals(Parameter.equal,
-				(EqualCheck.deepEquals(new Person().setName(""), new Person(), check).getParameter()));
-	}
-	@Test
-	public void interfase_method_should_work_as_expected(){
-		final Class<?> type = new Person().getClass();
-		final EqualCheck p = new  EqualCheck();
-		final Class<?> class1 = new Result().getClass();
-		System.out.println(p.selectedFields(type));
-		System.out.println(p.selectedFields(class1));
 	}
 }

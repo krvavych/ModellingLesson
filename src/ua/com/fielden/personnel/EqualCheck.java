@@ -6,75 +6,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import ua.com.fielden.personnel.Result.Parameter;
+import ua.com.fielden.personnel.structure.FiloQueue;
 
 public class EqualCheck implements IFieldSelector<Object>{
 
-	public static <T> Result deepEquals(final T o1, final T o2) throws IllegalArgumentException, IllegalAccessException{
-		final Set<Set<Object>> compared = new HashSet<>();
-		final  Set<String> road = new HashSet<>();
-		return deepEqualsNext(o1, o2, compared, road);
-	}
-
-	private static <T> Result deepEqualsNext(final T object1, final T object2, final Set<Set<Object>> compared, final Set<String> road)
-			throws IllegalArgumentException, IllegalAccessException {
-		final Class<?> classObject1 = object1.getClass();
-		final Class<?> classObject2 = object2.getClass();
-		if (classObject1 != classObject2) {
-			throw new IllegalArgumentException(
-					"You can`t compare different class objects");
-		}
-		final Set<Object> setWithCompareObject = new HashSet<Object>();
-
-		setWithCompareObject.add(object1);
-		setWithCompareObject.add(object2);
-		compared.add(setWithCompareObject);
-
-
-		final Field[] fieldsOfObject1 = classObject1.getDeclaredFields();
-		final Field[] fieldsOfObject2 = classObject2.getDeclaredFields();
-
-		for (int fieldNum = 0; fieldNum < fieldsOfObject1.length; fieldNum++) {
-			fieldsOfObject1[fieldNum].setAccessible(true);
-			fieldsOfObject2[fieldNum].setAccessible(true);
-			final Object newObject1 = fieldsOfObject1[fieldNum].get(object1);
-			final Object newObject2 = fieldsOfObject2[fieldNum].get(object2);
-			if ((newObject1 == null && newObject2 != null)
-					|| (newObject1 != null && newObject2 == null)) {
-
-				System.out.println("NullParameter: "+"this");
-				road.add(fieldsOfObject1[fieldNum].getName());
-				for (final String field : road) {
-					System.out.println("."+field);
-				}
-
-				return new Result(Parameter.nullParameter, newObject1,
-						newObject2);
-			}
-			if (newObject1 != null && newObject2 != null
-					&& (newObject1.getClass() == classObject1)
-					&& (newObject2.getClass() == classObject2)) {
-				final Set<Object> setWithCompareObjects = new HashSet<>();
-				setWithCompareObjects.add(newObject1);
-				setWithCompareObjects.add(newObject2);
-				if (!compared.contains(setWithCompareObjects)) {
-					road.add(fieldsOfObject1[fieldNum].getName());
-
-					compared.add(setWithCompareObjects);
-					return deepEqualsNext(newObject1, newObject2, compared, road);
-				}
-			}
-			if (newObject1 != null && newObject2 != null
-					&& newObject1.hashCode() != newObject2.hashCode()) {
-				road.add(fieldsOfObject1[fieldNum].getName());
-				System.out.println("NotEqual: "+"this");
-				for (final String field : road) {
-					System.out.println("."+field);
-				}
-				return new Result(Parameter.notEqual, newObject1, newObject2);
-			}
-		}
-		return new Result(Parameter.equal, object1, object2);
-	}
+	private final FiloQueue queue1 = new FiloQueue();
+	private final FiloQueue queue2 = new FiloQueue();
 
 	@Override
 	public Set<Field> selectedFields(final Class<?> className) {
@@ -95,62 +32,73 @@ public class EqualCheck implements IFieldSelector<Object>{
 		return newListOfField;
 	}
 
-	public static <T> Result deepEquals(final T obj1, final T obj2, final EqualCheck parameter) throws IllegalArgumentException, IllegalAccessException{
+	public  <T> Result deepEquals(final T obj1, final T obj2, final EqualCheck parameter) throws IllegalArgumentException, IllegalAccessException{
 		final Set<Set<Object>> compared = new HashSet<>();
 		final  Set<String> road = new HashSet<>();
+		queue1.push(obj1);
+		queue2.push(obj2);
 		return deepEqualsNext(obj1, obj2, compared, road, parameter);
 	}
 
-	private static <T> Result deepEqualsNext(final T object1, final T object2,
+	private <T> Result deepEqualsNext(final T object1, final T object2,
 			final Set<Set<Object>> compared, final Set<String> road,
 			final EqualCheck parameter) throws IllegalArgumentException, IllegalAccessException{
+
 		final Class<?> class1 = object1.getClass();
 		final Class<?> class2 = object2.getClass();
+		if (class1 != class2) {
+			throw new IllegalArgumentException(
+					"You can`t compare different class objects");
+		}
 		final Set<Field> listOfObject1 = parameter.selectedFields(class1);
-		final Set<Field> listOfObject2 = parameter.selectedFields(class2);
-		final Iterator<Field> iterator1 = listOfObject1.iterator();
-		final Iterator<Field> iterator2 = listOfObject2.iterator();
-		for (;iterator1.hasNext();) {
-			final Field field1 = iterator1.next();
-			field1.setAccessible(true);
-			final Field field2 = iterator2.next();
-			field2.setAccessible(true);
-			final Object newObject1 = field1.get(object1);
-			final Object newObject2 = field2.get(object2);
-			if ((newObject1 == null && newObject2 != null)
-					|| (newObject1 != null && newObject2 == null)) {
+		final Iterator<Field> iterator = listOfObject1.iterator();
+		final Set<String> roadList = new HashSet<>();
+		for (;iterator.hasNext();) {
+			final Field field = iterator.next();
+			field.setAccessible(true);
+			final Object newObject1 = field.get(object1);
+			final Object newObject2 = field.get(object2);
+			queue1.push(newObject1);
+			queue2.push(newObject2);
+			roadList.add(field.getName());
+		}
+		while (!queue1.isEmpty()) {
+			final Object new1 = queue1.pop();
+			final Object new2 = queue2.pop();
+			for (final String fieldName : roadList) {
+			if ((new1 == null && new2 != null)
+					|| (new1 != null && new2 == null)) {
 
-				System.out.println("NullParameter: "+"this");
-				road.add(field1.getName());
+				System.out.println("NullParameter: " + "this");
+				road.add(fieldName);
 				for (final String fieldOfRoad : road) {
-					System.out.println("."+fieldOfRoad);
+					System.out.println("." + fieldOfRoad);
 				}
 
-				return new Result(Parameter.nullParameter, newObject1,
-						newObject2);
+				return new Result(Parameter.nullParameter, new1, new2);
 			}
-			if (newObject1 != null && newObject2 != null
-					&& (newObject1.getClass() == class1)
-					&& (newObject2.getClass() == class2)) {
+			if (new1 != null && new2 != null && (new1.getClass() == class1)
+					&& (new2.getClass() == class2)) {
 				final Set<Object> setWithCompareObjects = new HashSet<>();
-				setWithCompareObjects.add(newObject1);
-				setWithCompareObjects.add(newObject2);
+				setWithCompareObjects.add(new1);
+				setWithCompareObjects.add(new2);
 				if (!compared.contains(setWithCompareObjects)) {
-					road.add(field1.getName());
-
+					road.add(fieldName);
 					compared.add(setWithCompareObjects);
-					return deepEqualsNext(newObject1, newObject2, compared, road);
+					return deepEqualsNext(new1, new2, compared, road,
+							parameter);
 				}
 			}
-			if (newObject1 != null && newObject2 != null
-					&& newObject1.hashCode() != newObject2.hashCode()) {
-				road.add(field1.getName());
-				System.out.println("NotEqual: "+"this");
+			if (new1 != null && new2 != null
+					&& new1.hashCode() != new2.hashCode()) {
+				road.add(fieldName);
+				System.out.println("NotEqual: " + "this");
 				for (final String fieldOfRoad : road) {
-					System.out.println("."+fieldOfRoad);
+					System.out.println("." + fieldOfRoad);
 				}
-				return new Result(Parameter.notEqual, newObject1, newObject2);
+				return new Result(Parameter.notEqual, new1, new2);
 			}
+		}
 		}
 		return new Result(Parameter.equal, object1, object2);
 	}

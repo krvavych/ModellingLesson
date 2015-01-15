@@ -29,8 +29,9 @@ public class BfsCheckTest {
 				.setBirthday(LocalDate.of(2050, Month.JANUARY, 12))
 				.setOrganisationRole(new OrganisationRole("someone", null))
 				.setSupervisor(testPerson).setPartner(testPerson);
+		final BfsCheck check = new BfsCheck();
 		assertEquals(Parameter.notEqual,
-				(BfsCheck.bfsEquals(person1, person2).getParameter()));
+				(check.deepEquals(person1, person2, check).getParameter()));
 
 	}
 
@@ -45,12 +46,13 @@ public class BfsCheckTest {
 				.setSurname("P1").setSupervisor(superA);
 		final Person personWithSuperAWithPartner = new Person().setName("P1")
 				.setSurname("P1").setSupervisor(superAWithPartner);
-		//System.out.println(personWithSuperA.toString());
-		//System.out.println(personWithSuperAWithPartner.toString());
+		System.out.println(personWithSuperA.toString());
+		System.out.println(personWithSuperAWithPartner.toString());
+		final BfsCheck check = new BfsCheck();
 		assertEquals(
 				Parameter.nullParameter,
-				BfsCheck.bfsEquals(personWithSuperA,
-						personWithSuperAWithPartner).getParameter());
+				check.deepEquals(personWithSuperA,
+						personWithSuperAWithPartner, check).getParameter());
 	}
 
 	@Test
@@ -63,14 +65,16 @@ public class BfsCheckTest {
 		final Person personB = new Person().setName("A").setSurname("A")
 				.setSupervisor(supervisor);
 		supervisor.setPartner(personA);
-		assertEquals(Parameter.equal, BfsCheck.bfsEquals(personA, personB)
+		final BfsCheck check = new BfsCheck();
+		assertEquals(Parameter.equal, check.deepEquals(personA, personB, check)
 				.getParameter());
 	}
 
 	@Test
 	public void it_should_be_impossible_to_compare_different_objects() {
+		final BfsCheck  check = new BfsCheck();
 		try {
-			BfsCheck.bfsEquals(new Result(), new Person());
+			check.deepEquals(new Result(), new Person(), check);
 			fail();
 		} catch (final Exception e) {
 		}
@@ -87,8 +91,9 @@ public class BfsCheckTest {
 				.setSalary(BigDecimal.valueOf(50))
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
 				.setSupervisor(null).setOrganisationRole(null).setPartner(null);
+		final BfsCheck check = new BfsCheck();
 		assertEquals(Parameter.equal,
-				(BfsCheck.bfsEquals(person1, person2)).getParameter());
+				(check.deepEquals(person1, person2, check)).getParameter());
 	}
 
 	@Test
@@ -100,7 +105,8 @@ public class BfsCheckTest {
 		final Person supervisor2 = new Person().setPartner(person2).setName("name");
 		person1.setSupervisor(supervisor1).setPartner(supervisor1);
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
-		assertEquals(Parameter.notEqual, BfsCheck
-				.bfsEquals(person1, person2).getParameter());
+		final BfsCheck check = new BfsCheck();
+		assertEquals(Parameter.notEqual, check
+				.deepEquals(person1, person2, check).getParameter());
 	}
 }

@@ -23,17 +23,16 @@ public class DfsOrDfsTest {
 		final Person person1 = new Person().setName(null).setName("Ann")
 				.setSurname("Smith").setSalary(BigDecimal.valueOf(50))
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
-				.setOrganisationRole(new OrganisationRole("menager", null))
 				.setSupervisor(testPerson).setPartner(testPerson);
 		final Person person2 = new Person().setName("Natalie")
 				.setSurname("Kruel").setSalary(BigDecimal.valueOf(5000))
 				.setBirthday(LocalDate.of(2050, Month.JANUARY, 12))
-				.setOrganisationRole(new OrganisationRole("someone", null))
 				.setSupervisor(testPerson).setPartner(testPerson);
+		final Check check = new Check();
 		assertEquals(Parameter.notEqual,
-				(Check.checkEquals(person1, person2, CheckBy.Bfs).getParameter()));
+				(check.deepEquals(person1, person2, check, CheckBy.Bfs).getParameter()));
 		assertEquals(Parameter.notEqual,
-				(Check.checkEquals(person1, person2, CheckBy.Dfs).getParameter()));
+				(check.deepEquals(person1, person2, check, CheckBy.Dfs).getParameter()));
 
 
 	}
@@ -49,16 +48,17 @@ public class DfsOrDfsTest {
 				.setSurname("P1").setSupervisor(superA);
 		final Person personWithSuperAWithPartner = new Person().setName("P1")
 				.setSurname("P1").setSupervisor(superAWithPartner);
-		//System.out.println(personWithSuperA.toString());
-		//System.out.println(personWithSuperAWithPartner.toString());
+		final Check check = new Check();
+		System.out.println(personWithSuperA.toString());
+		System.out.println(personWithSuperAWithPartner.toString());
 		assertEquals(
 				Parameter.nullParameter,
-				Check.checkEquals(personWithSuperA,
-						personWithSuperAWithPartner, CheckBy.Bfs).getParameter());
+				check.deepEquals(personWithSuperA,
+						personWithSuperAWithPartner, check, CheckBy.Bfs).getParameter());
 		assertEquals(
 				Parameter.nullParameter,
-				Check.checkEquals(personWithSuperA,
-						personWithSuperAWithPartner, CheckBy.Dfs).getParameter());
+				check.deepEquals(personWithSuperA,
+						personWithSuperAWithPartner, check, CheckBy.Dfs).getParameter());
 	}
 
 	@Test
@@ -71,18 +71,20 @@ public class DfsOrDfsTest {
 		final Person personB = new Person().setName("A").setSurname("A")
 				.setSupervisor(supervisor);
 		supervisor.setPartner(personA);
-		assertEquals(Parameter.equal, Check.checkEquals(personA, personB, CheckBy.Bfs)
+		final Check check = new Check();
+		assertEquals(Parameter.equal, check.deepEquals(personA, personB, check, CheckBy.Bfs)
 				.getParameter());
-		assertEquals(Parameter.equal, Check.checkEquals(personA, personB, CheckBy.Dfs)
+		assertEquals(Parameter.equal, check.deepEquals(personA, personB, check, CheckBy.Dfs)
 				.getParameter());
 	}
 
 	@Test
 	public void it_should_be_impossible_to_compare_different_objects() {
+		final Check check = new Check();
 		try {
-			Check.checkEquals(new Result(), new Person(), CheckBy.Bfs);
+			check.deepEquals(new Result(), new Person(), check, CheckBy.Bfs);
 			fail();
-			Check.checkEquals(new Result(), new Person(), CheckBy.Dfs);
+			check.deepEquals(new Result(), new Person(), check, CheckBy.Dfs);
 			fail();
 		} catch (final Exception e) {
 		}
@@ -94,15 +96,18 @@ public class DfsOrDfsTest {
 		final Person person1 = new Person().setSurname("Smith").setName("Ann")
 				.setSalary(BigDecimal.valueOf(50))
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
-				.setOrganisationRole(null).setSupervisor(null).setPartner(null);
+				.setSupervisor(null).setPartner(null);
 		final Person person2 = new Person().setSurname("Smith").setName("Ann")
 				.setSalary(BigDecimal.valueOf(50))
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
-				.setSupervisor(null).setOrganisationRole(null).setPartner(null);
+				.setSupervisor(null).setPartner(null);
+		final Check check = new Check();
+		System.out.println(person1.toString());
+		System.out.println(person2.toString());
 		assertEquals(Parameter.equal,
-				(Check.checkEquals(person1, person2, CheckBy.Bfs)).getParameter());
+				(check.deepEquals(person1, person2, check, CheckBy.Bfs)).getParameter());
 		assertEquals(Parameter.equal,
-				(Check.checkEquals(person1, person2, CheckBy.Dfs)).getParameter());
+				(check.deepEquals(person1, person2, check, CheckBy.Dfs)).getParameter());
 	}
 
 	@Test
@@ -114,10 +119,11 @@ public class DfsOrDfsTest {
 		final Person supervisor2 = new Person().setPartner(person2).setName("name");
 		person1.setSupervisor(supervisor1).setPartner(supervisor1);
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
-		assertEquals(Parameter.notEqual, Check
-				.checkEquals(person1, person2, CheckBy.Bfs).getParameter());
-		assertEquals(Parameter.notEqual, Check
-				.checkEquals(person1, person2, CheckBy.Dfs).getParameter());
+		final Check check = new Check();
+		assertEquals(Parameter.notEqual, check
+				.deepEquals(person1, person2, check, CheckBy.Bfs).getParameter());
+		assertEquals(Parameter.notEqual, check
+				.deepEquals(person1, person2, check, CheckBy.Dfs).getParameter());
 	}
 
 }

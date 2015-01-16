@@ -3,10 +3,10 @@ package ua.com.fielden.personnel.structure;
 import java.util.Stack;
 
 public class FiloQueue implements IQueue {
-	final private Stack<Object> stack = new Stack<>();
+	final private Stack<Pair<Pair<Object, Object>, Pair<Object, Object>>> stack = new Stack<>();
 
 	@Override
-	public FiloQueue push(final Object object) {
+	public FiloQueue push(final Pair<Pair<Object, Object>, Pair<Object, Object>> object) {
 		stack.push(object);
 		return this;
 	}
@@ -17,7 +17,7 @@ public class FiloQueue implements IQueue {
 	}
 
 	@Override
-	public Object pop() {
+	public Pair<Pair<Object, Object>, Pair<Object, Object>> pop() {
 		return stack.pop();
 	}
 

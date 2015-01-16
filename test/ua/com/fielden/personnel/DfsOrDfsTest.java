@@ -11,6 +11,8 @@ import org.junit.Test;
 
 import ua.com.fielden.personnel.Check.CheckBy;
 import ua.com.fielden.personnel.Result.Parameter;
+import ua.com.fielden.personnel.selectors.AllFieldSelector;
+import ua.com.fielden.personnel.selectors.IFieldSelector;
 
 public class DfsOrDfsTest {
 	@Test
@@ -28,11 +30,11 @@ public class DfsOrDfsTest {
 				.setSurname("Kruel").setSalary(BigDecimal.valueOf(5000))
 				.setBirthday(LocalDate.of(2050, Month.JANUARY, 12))
 				.setSupervisor(testPerson).setPartner(testPerson);
-		final Check check = new Check();
+		final IFieldSelector check = new AllFieldSelector();
 		assertEquals(Parameter.notEqual,
-				(check.deepEquals(person1, person2, check, CheckBy.Bfs).getParameter()));
+				(Check.deepEquals(person1, person2, check, CheckBy.Bfs).getParameter()));
 		assertEquals(Parameter.notEqual,
-				(check.deepEquals(person1, person2, check, CheckBy.Dfs).getParameter()));
+				(Check.deepEquals(person1, person2, check, CheckBy.Dfs).getParameter()));
 
 
 	}
@@ -48,16 +50,16 @@ public class DfsOrDfsTest {
 				.setSurname("P1").setSupervisor(superA);
 		final Person personWithSuperAWithPartner = new Person().setName("P1")
 				.setSurname("P1").setSupervisor(superAWithPartner);
-		final Check check = new Check();
+		final IFieldSelector check = new AllFieldSelector();
 		System.out.println(personWithSuperA.toString());
 		System.out.println(personWithSuperAWithPartner.toString());
 		assertEquals(
 				Parameter.nullParameter,
-				check.deepEquals(personWithSuperA,
+				Check.deepEquals(personWithSuperA,
 						personWithSuperAWithPartner, check, CheckBy.Bfs).getParameter());
 		assertEquals(
 				Parameter.nullParameter,
-				check.deepEquals(personWithSuperA,
+				Check.deepEquals(personWithSuperA,
 						personWithSuperAWithPartner, check, CheckBy.Dfs).getParameter());
 	}
 
@@ -71,20 +73,20 @@ public class DfsOrDfsTest {
 		final Person personB = new Person().setName("A").setSurname("A")
 				.setSupervisor(supervisor);
 		supervisor.setPartner(personA);
-		final Check check = new Check();
-		assertEquals(Parameter.equal, check.deepEquals(personA, personB, check, CheckBy.Bfs)
+		final IFieldSelector check = new AllFieldSelector();
+		assertEquals(Parameter.equal, Check.deepEquals(personA, personB, check, CheckBy.Bfs)
 				.getParameter());
-		assertEquals(Parameter.equal, check.deepEquals(personA, personB, check, CheckBy.Dfs)
+		assertEquals(Parameter.equal, Check.deepEquals(personA, personB, check, CheckBy.Dfs)
 				.getParameter());
 	}
 
 	@Test
 	public void it_should_be_impossible_to_compare_different_objects() {
-		final Check check = new Check();
+		final IFieldSelector check = new AllFieldSelector();
 		try {
-			check.deepEquals(new Result(), new Person(), check, CheckBy.Bfs);
+			Check.deepEquals(new Result(), new Person(), check, CheckBy.Bfs);
 			fail();
-			check.deepEquals(new Result(), new Person(), check, CheckBy.Dfs);
+			Check.deepEquals(new Result(), new Person(), check, CheckBy.Dfs);
 			fail();
 		} catch (final Exception e) {
 		}
@@ -101,13 +103,13 @@ public class DfsOrDfsTest {
 				.setSalary(BigDecimal.valueOf(50))
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
 				.setSupervisor(null).setPartner(null);
-		final Check check = new Check();
+		final IFieldSelector check = new AllFieldSelector();
 		System.out.println(person1.toString());
 		System.out.println(person2.toString());
 		assertEquals(Parameter.equal,
-				(check.deepEquals(person1, person2, check, CheckBy.Bfs)).getParameter());
+				(Check.deepEquals(person1, person2, check, CheckBy.Bfs)).getParameter());
 		assertEquals(Parameter.equal,
-				(check.deepEquals(person1, person2, check, CheckBy.Dfs)).getParameter());
+				(Check.deepEquals(person1, person2, check, CheckBy.Dfs)).getParameter());
 	}
 
 	@Test
@@ -119,10 +121,10 @@ public class DfsOrDfsTest {
 		final Person supervisor2 = new Person().setPartner(person2).setName("name");
 		person1.setSupervisor(supervisor1).setPartner(supervisor1);
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
-		final Check check = new Check();
-		assertEquals(Parameter.notEqual, check
+		final IFieldSelector check = new AllFieldSelector();
+		assertEquals(Parameter.notEqual, Check
 				.deepEquals(person1, person2, check, CheckBy.Bfs).getParameter());
-		assertEquals(Parameter.notEqual, check
+		assertEquals(Parameter.notEqual, Check
 				.deepEquals(person1, person2, check, CheckBy.Dfs).getParameter());
 	}
 

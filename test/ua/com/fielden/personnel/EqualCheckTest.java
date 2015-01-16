@@ -10,6 +10,9 @@ import java.time.Month;
 import org.junit.Test;
 
 import ua.com.fielden.personnel.Result.Parameter;
+import ua.com.fielden.personnel.selectors.AllFieldSelector;
+import ua.com.fielden.personnel.selectors.FieldPersonSelector;
+import ua.com.fielden.personnel.selectors.IFieldSelector;
 
 public class EqualCheckTest {
 
@@ -30,9 +33,9 @@ public class EqualCheckTest {
 				.setBirthday(LocalDate.of(2050, Month.JANUARY, 12))
 				.setOrganisationRole(new OrganisationRole("someone", null))
 				.setSupervisor(testPerson).setPartner(testPerson);
-		final EqualCheck check = new EqualCheck();
+		final IFieldSelector check = new FieldPersonSelector();
 		assertEquals(Parameter.notEqual,
-				(check.deepEquals(person1, person2, check).getParameter()));
+				(EqualCheck.deepEquals(person1, person2, check).getParameter()));
 
 	}
 
@@ -47,12 +50,12 @@ public class EqualCheckTest {
 				.setSurname("P1").setSupervisor(superA);
 		final Person personWithSuperAWithPartner = new Person().setName("P1")
 				.setSurname("P1").setSupervisor(superAWithPartner);
-		final EqualCheck check = new EqualCheck();
+		final IFieldSelector check = new FieldPersonSelector();
 		System.out.println(personWithSuperA.toString());
 		System.out.println(personWithSuperAWithPartner.toString());
 		assertEquals(
 				Parameter.equal,
-				check.deepEquals(personWithSuperA,
+				EqualCheck.deepEquals(personWithSuperA,
 						personWithSuperAWithPartner, check).getParameter());
 	}
 
@@ -66,8 +69,8 @@ public class EqualCheckTest {
 		final Person personB = new Person().setName("A").setSurname("A")
 				.setSupervisor(supervisor);
 		supervisor.setPartner(personA);
-		final EqualCheck check = new EqualCheck();
-		assertEquals(Parameter.equal, check.deepEquals(personA, personB, check)
+		final IFieldSelector check = new FieldPersonSelector();
+		assertEquals(Parameter.equal, EqualCheck.deepEquals(personA, personB, check)
 				.getParameter());
 
 
@@ -75,9 +78,9 @@ public class EqualCheckTest {
 
 	@Test
 	public void it_should_be_impossible_to_compare_different_objects() {
-		final EqualCheck check = new EqualCheck();
+		final IFieldSelector check = new FieldPersonSelector();
 		try {
-			check.deepEquals(new Result(), new Person(), check);
+			EqualCheck.deepEquals(new Result(), new Person(), check);
 			fail();
 		} catch (final Exception e) {
 		}
@@ -94,8 +97,8 @@ public class EqualCheckTest {
 				.setSalary(BigDecimal.valueOf(50))
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
 				.setSupervisor(null).setOrganisationRole(null).setPartner(null);
-		final EqualCheck check = new EqualCheck();
-		assertEquals(Parameter.equal, check
+		final IFieldSelector check = new FieldPersonSelector();
+		assertEquals(Parameter.equal, EqualCheck
 				.deepEquals(person1, person2, check).getParameter());
 
 
@@ -110,8 +113,8 @@ public class EqualCheckTest {
 		final Person supervisor2 = new Person().setPartner(person2).setName("name");
 		person1.setSupervisor(supervisor1).setPartner(supervisor1);
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
-		final EqualCheck check = new EqualCheck();
-		assertEquals(Parameter.equal, check
-				.deepEquals(person1, person2, check).getParameter());
+		final IFieldSelector check = new AllFieldSelector();
+		assertEquals(Parameter.notEqual, EqualCheck
+				.deepEquals(person1, person2, check ).getParameter());
 	}
 }

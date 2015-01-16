@@ -10,6 +10,8 @@ import java.time.Month;
 import org.junit.Test;
 
 import ua.com.fielden.personnel.Result.Parameter;
+import ua.com.fielden.personnel.selectors.AllFieldSelector;
+import ua.com.fielden.personnel.selectors.IFieldSelector;
 
 public class BfsCheckTest {
 	@Test
@@ -29,9 +31,9 @@ public class BfsCheckTest {
 				.setBirthday(LocalDate.of(2050, Month.JANUARY, 12))
 				.setOrganisationRole(new OrganisationRole("someone", null))
 				.setSupervisor(testPerson).setPartner(testPerson);
-		final BfsCheck check = new BfsCheck();
+		final IFieldSelector check = new AllFieldSelector();
 		assertEquals(Parameter.notEqual,
-				(check.deepEquals(person1, person2, check).getParameter()));
+				(BfsCheck.deepEquals(person1, person2, check).getParameter()));
 
 	}
 
@@ -48,10 +50,10 @@ public class BfsCheckTest {
 				.setSurname("P1").setSupervisor(superAWithPartner);
 		System.out.println(personWithSuperA.toString());
 		System.out.println(personWithSuperAWithPartner.toString());
-		final BfsCheck check = new BfsCheck();
+		final IFieldSelector check = new AllFieldSelector();
 		assertEquals(
 				Parameter.nullParameter,
-				check.deepEquals(personWithSuperA,
+				BfsCheck.deepEquals(personWithSuperA,
 						personWithSuperAWithPartner, check).getParameter());
 	}
 
@@ -65,16 +67,16 @@ public class BfsCheckTest {
 		final Person personB = new Person().setName("A").setSurname("A")
 				.setSupervisor(supervisor);
 		supervisor.setPartner(personA);
-		final BfsCheck check = new BfsCheck();
-		assertEquals(Parameter.equal, check.deepEquals(personA, personB, check)
+		final IFieldSelector check = new AllFieldSelector();
+		assertEquals(Parameter.equal, BfsCheck.deepEquals(personA, personB, check)
 				.getParameter());
 	}
 
 	@Test
 	public void it_should_be_impossible_to_compare_different_objects() {
-		final BfsCheck  check = new BfsCheck();
+		final IFieldSelector  check = new AllFieldSelector();
 		try {
-			check.deepEquals(new Result(), new Person(), check);
+			BfsCheck.deepEquals(new Result(), new Person(), check);
 			fail();
 		} catch (final Exception e) {
 		}
@@ -91,9 +93,9 @@ public class BfsCheckTest {
 				.setSalary(BigDecimal.valueOf(50))
 				.setBirthday(LocalDate.of(2012, Month.JULY, 12))
 				.setSupervisor(null).setOrganisationRole(null).setPartner(null);
-		final BfsCheck check = new BfsCheck();
+		final IFieldSelector check = new AllFieldSelector();
 		assertEquals(Parameter.equal,
-				(check.deepEquals(person1, person2, check)).getParameter());
+				(BfsCheck.deepEquals(person1, person2, check)).getParameter());
 	}
 
 	@Test
@@ -105,8 +107,8 @@ public class BfsCheckTest {
 		final Person supervisor2 = new Person().setPartner(person2).setName("name");
 		person1.setSupervisor(supervisor1).setPartner(supervisor1);
 		person2.setSupervisor(supervisor2).setPartner(supervisor2);
-		final BfsCheck check = new BfsCheck();
-		assertEquals(Parameter.notEqual, check
+		final IFieldSelector check = new AllFieldSelector();
+		assertEquals(Parameter.notEqual, BfsCheck
 				.deepEquals(person1, person2, check).getParameter());
 	}
 }
